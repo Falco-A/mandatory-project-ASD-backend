@@ -1,0 +1,64 @@
+version: "3.9"
+services:
+    www:
+        build:
+            context: .
+        ports: 
+            - 8001:80
+        volumes:
+            - ./www:/var/www/html/
+        links:
+            - db
+        networks:
+            mandatory-project-backend-network:
+                ipv4_address: 192.168.100.2
+        environment:
+            TZ: Europe/Rome
+        env_file:
+            - ./.env
+        restart: unless-stopped
+        container_name: ASD-project-php-apache
+    db:
+        image: mysql:8.0
+        ports: 
+            - 3306:3306
+        environment:
+            # name of the database to be created on image startup
+            MYSQL_DATABASE: ASD_exam
+            MYSQL_USER: generic_user
+            MYSQL_PASSWORD: ${MYSQL_USER_PASSWORD}
+            MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+            TZ: Europe/Rome
+        env_file:
+            -   ./.env
+        volumes:
+            # files in /docker-entrypoint-initdb.d will be executed
+            # when the container is started for the first time
+            - ./dump:/docker-entrypoint-initdb.d
+            - db-data:/var/lib/mysql
+        networks:
+            mandatory-project-backend-network:
+                ipv4_address: 192.168.100.3
+        restart: unless-stopped
+        container_name: ASD-project-mysql
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        links:
+            - db
+        ports:
+            - 8000:80
+        environment:
+            PMA_HOST: db
+            TZ: Europe/Rome
+        env_file:
+            - ./.env
+        networks:
+            mandatory-project-backend-network:
+                ipv4_address: 192.168.100.4
+        restart: unless-stopped
+        container_name: ASD-project-phpmyadmin
+volumes:
+    db-data:
+networks:
+    mandatory-project-backend-network:
+        external: true
