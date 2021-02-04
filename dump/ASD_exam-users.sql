@@ -7,5 +7,5 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `username`, `password`) VALUES
 (1, 'Alessio', '123456'),
-(2, 'Gennaro', '8_dita_rimanenti'),
-(3, 'Ciro', 'orologio');
+(2, 'Mario', 'Rossi'),
+(3, 'Ciro', 'Esposito');
